@@ -1,0 +1,18 @@
+{application, arizona_nova, [
+    {description, "Arizona LiveView integration for the Nova web framework"},
+    {vsn, "git"},
+    {registered, []},
+    {mod, {arizona_nova_app, []}},
+    {applications, [
+        kernel,
+        stdlib,
+        arizona_core,
+        cowboy
+    ]},
+    {env, [
+        {live_reload, false}
+    ]},
+    {modules, []},
+    {licenses, ["MIT"]},
+    {links, []}
+]}.
