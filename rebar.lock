@@ -1,7 +1,7 @@
 {"1.2.0",
 [{<<"arizona_core">>,
   {git,"https://github.com/Taure/arizona_core.git",
-       {ref,"87981a605c286956cf0b0763cd50b31e944f133b"}},
+       {ref,"39665e42ac533fd12d45c1e39e5e695f714cec95"}},
   0},
  {<<"cowboy">>,{pkg,<<"cowboy">>,<<"2.14.2">>},0},
  {<<"cowlib">>,{pkg,<<"cowlib">>,<<"2.16.0">>},1},
