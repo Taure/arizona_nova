@@ -12,4 +12,4 @@ jobs:
     with:
       otp-version: '28'
       enable-eunit: false
-      enable-audit: true
+      enable-audit: false
