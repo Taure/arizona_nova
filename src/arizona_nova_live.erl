@@ -106,7 +106,7 @@ register_view(ViewModule, MountArg) ->
 build_dispatch(Views) ->
     CowboyRoutes = [
         {<<"/">>, arizona_view_handler, {view, Mod, MountArg, []}}
-        || {Mod, MountArg} <- maps:to_list(Views)
+     || {Mod, MountArg} <- maps:to_list(Views)
     ],
     ArizonaDispatch = cowboy_router:compile([{'_', CowboyRoutes}]),
     persistent_term:put(arizona_dispatch, ArizonaDispatch),
