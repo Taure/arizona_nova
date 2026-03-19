@@ -37,7 +37,7 @@ When enabled, subscribes to the `arizona:reload` PubSub topic.
     ControllerData :: map().
 init(ControllerData) ->
     Req = maps:get(req, ControllerData),
-    ViewResolver = maps:get(view_resolver, ControllerData),
+    ViewResolver = maps:get(view_resolver, ControllerData, fun arizona_nova_live:resolve_view/1),
     PathParams = cowboy_req:parse_qs(Req),
     {~"path", LivePath} = proplists:lookup(~"path", PathParams),
     {~"qs", Qs} = proplists:lookup(~"qs", PathParams),
