@@ -181,7 +181,7 @@ handle_websocket_error(Error, Reason, Stacktrace, ControllerData) ->
     {reply, {text, ErrorPayload}, ControllerData}.
 
 json_encode(Term) ->
-    json:encode(Term, fun json_encoder/2).
+    iolist_to_binary(json:encode(Term, fun json_encoder/2)).
 
 json_encoder(Tuple, Encoder) when is_tuple(Tuple) ->
     json:encode_list(tuple_to_list(Tuple), Encoder);
