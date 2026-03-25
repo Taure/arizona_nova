@@ -29,7 +29,7 @@ routes(_Env) ->
             security => false,
             routes => [
                 {~"/live", arizona_nova_ws, #{protocol => ws}},
-                {~"/assets/[...]", {arizona_core, "static/assets"}}
+                {~"/assets/[...]", fun arizona_nova_static:serve/1, #{methods => [get]}}
             ]
         }
     ].
