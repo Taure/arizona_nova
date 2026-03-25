@@ -25,9 +25,10 @@ start(_StartType, _StartArgs) ->
 init_resolver_table() ->
     case ets:whereis(arizona_nova_resolvers) of
         undefined ->
-            ets:new(arizona_nova_resolvers, [
+            _ = ets:new(arizona_nova_resolvers, [
                 named_table, public, set, {read_concurrency, true}
-            ]);
+            ]),
+            ok;
         _ ->
             ok
     end.

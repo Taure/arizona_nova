@@ -34,14 +34,20 @@ websocket_handle({ping, _}, ControllerData) ->
 websocket_handle({pong, _}, ControllerData) ->
     {ok, ControllerData};
 websocket_handle(Frame, ControllerData) ->
-    logger:info(#{msg => ~"WS handle frame", frame => Frame, has_live_pid => maps:is_key(live_pid, ControllerData)}),
+    logger:info(#{
+        msg => ~"WS handle frame",
+        frame => Frame,
+        has_live_pid => maps:is_key(live_pid, ControllerData)
+    }),
     try
         Result = arizona_nova_websocket:websocket_handle(Frame, ControllerData),
         logger:info(#{msg => ~"WS handle result", result_type => element(1, Result)}),
         flatten_reply(Result)
     catch
         Class:Reason:Stack ->
-            logger:error(#{msg => ~"WS handle crashed", class => Class, reason => Reason, stacktrace => Stack}),
+            logger:error(#{
+                msg => ~"WS handle crashed", class => Class, reason => Reason, stacktrace => Stack
+            }),
             {ok, ControllerData}
     end.
 
@@ -66,12 +72,8 @@ terminate(Reason, Req, ControllerData) ->
 %% Nova's handle_ws expects {reply, SingleFrame, CD}, not {reply, [Frame], CD}.
 flatten_reply({ok, CD}) ->
     {ok, CD};
-flatten_reply({reply, {_Type, _Data} = Frame, CD}) ->
-    {reply, Frame, CD};
-flatten_reply({reply, [], CD}) ->
-    {ok, CD};
 flatten_reply({reply, [Frame], CD}) ->
     {reply, Frame, CD};
 flatten_reply({reply, [Frame | Rest], CD}) ->
-    [self() ! {pending_frame, F} || F <- Rest],
+    _ = [self() ! {pending_frame, F} || F <- Rest],
     {reply, Frame, CD}.
