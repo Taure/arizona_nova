@@ -15,7 +15,18 @@ init(ControllerData) ->
 
 -spec websocket_init(map()) -> {reply, term(), map()} | {ok, map()}.
 websocket_init(ControllerData) ->
-    flatten_reply(arizona_nova_websocket:websocket_init(ControllerData)).
+    try
+        flatten_reply(arizona_nova_websocket:websocket_init(ControllerData))
+    catch
+        Class:Reason:Stack ->
+            logger:error(#{
+                msg => ~"Arizona WS init failed",
+                class => Class,
+                reason => Reason,
+                stacktrace => Stack
+            }),
+            {ok, ControllerData}
+    end.
 
 -spec websocket_handle(term(), map()) -> {reply, term(), map()} | {ok, map()}.
 websocket_handle({ping, _}, ControllerData) ->
@@ -23,7 +34,16 @@ websocket_handle({ping, _}, ControllerData) ->
 websocket_handle({pong, _}, ControllerData) ->
     {ok, ControllerData};
 websocket_handle(Frame, ControllerData) ->
-    flatten_reply(arizona_nova_websocket:websocket_handle(Frame, ControllerData)).
+    logger:info(#{msg => ~"WS handle frame", frame => Frame, has_live_pid => maps:is_key(live_pid, ControllerData)}),
+    try
+        Result = arizona_nova_websocket:websocket_handle(Frame, ControllerData),
+        logger:info(#{msg => ~"WS handle result", result_type => element(1, Result)}),
+        flatten_reply(Result)
+    catch
+        Class:Reason:Stack ->
+            logger:error(#{msg => ~"WS handle crashed", class => Class, reason => Reason, stacktrace => Stack}),
+            {ok, ControllerData}
+    end.
 
 -spec websocket_info(term(), map()) -> {reply, term(), map()} | {ok, map()}.
 websocket_info({pending_frame, Frame}, ControllerData) ->

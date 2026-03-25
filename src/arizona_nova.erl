@@ -38,11 +38,19 @@ resolve_view(Req) ->
     Resolvers = ets:tab2list(?RESOLVER_TABLE),
     try_resolvers(Resolvers, Req).
 
-try_resolvers([], _Req) ->
-    {view, arizona_nova_fallback_view, undefined, []};
-try_resolvers([{_App, Resolver} | Rest], Req) ->
+try_resolvers([], Req) ->
+    logger:warning(#{msg => ~"No view resolver matched", path => maps:get(path, Req, undefined)}),
+    error({no_view_resolver, Req});
+try_resolvers([{App, Resolver} | Rest], Req) ->
     try
-        Resolver(Req)
+        case Resolver(Req) of
+            {view, _, _, _} = Result -> Result;
+            Other ->
+                logger:warning(#{msg => ~"View resolver returned unexpected format", app => App, result => Other}),
+                try_resolvers(Rest, Req)
+        end
     catch
-        _:_ -> try_resolvers(Rest, Req)
+        Class:Reason ->
+            logger:warning(#{msg => ~"View resolver failed", app => App, class => Class, reason => Reason}),
+            try_resolvers(Rest, Req)
     end.
