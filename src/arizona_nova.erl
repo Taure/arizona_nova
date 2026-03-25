@@ -44,13 +44,18 @@ try_resolvers([], Req) ->
 try_resolvers([{App, Resolver} | Rest], Req) ->
     try
         case Resolver(Req) of
-            {view, _, _, _} = Result -> Result;
+            {view, _, _, _} = Result ->
+                Result;
             Other ->
-                logger:warning(#{msg => ~"View resolver returned unexpected format", app => App, result => Other}),
+                logger:warning(#{
+                    msg => ~"View resolver returned unexpected format", app => App, result => Other
+                }),
                 try_resolvers(Rest, Req)
         end
     catch
         Class:Reason ->
-            logger:warning(#{msg => ~"View resolver failed", app => App, class => Class, reason => Reason}),
+            logger:warning(#{
+                msg => ~"View resolver failed", app => App, class => Class, reason => Reason
+            }),
             try_resolvers(Rest, Req)
     end.
