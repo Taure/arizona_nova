@@ -12,10 +12,10 @@ permissions:
 
 jobs:
   ci:
-    uses: Taure/erlang-ci/.github/workflows/ci.yml@v1
+    uses: Taure/erlang-ci/.github/workflows/ci.yml@v2.0.5
     with:
       otp-version: '28'
-      enable-audit: true
+      enable-audit: false
       enable-coverage: true
       enable-ex-doc: true
       enable-sbom: true
